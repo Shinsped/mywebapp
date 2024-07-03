@@ -2,7 +2,7 @@ pipeline {
   agent any
   
   triggers {
-    pollSCM('* * * * *')
+    pollSCM '* * * * *'
   }
 
   stages {
@@ -14,7 +14,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        sh 'mvn clean package'
+        sh 'mvn package -Dmaven.test.skip=true '
       }  
     }
     stage('Test') {
