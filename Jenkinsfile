@@ -29,8 +29,8 @@ pipeline {
                         path: '', url: 'http://192.168.56.102:8080'
                     )
                 ], 
-                contextPath: 'hello-world.war', 
-                war: 'target'
+                contextPath: null, 
+                war: 'target/hello-world.war'
             }
         }
     }
