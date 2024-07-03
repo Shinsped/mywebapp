@@ -9,7 +9,7 @@ pipeline {
     stage('Checkout') {
       steps {  
         git branch: 'main',
-            url: '<URL>'
+            url: 'https://github.com/Shinsped/mywebapp'
       }
     }
     stage('Build') {
