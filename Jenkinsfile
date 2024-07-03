@@ -24,7 +24,7 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        deploy adapters: [tomcat9(credentialsId: 'admin', url: 'https://github.com/Shinsped/mywebapp')], contextPath: null, war: 'path/to/war'
+        deploy adapters: [tomcat9(credentialsId: 'admin', url: 'https://github.com/Shinsped/mywebapp')], contextPath: null, war: 'target/mywebapp.war'
       }
     }
   }
