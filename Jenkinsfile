@@ -25,7 +25,7 @@ pipeline {
             steps {
                 deploy adapters: [
                     tomcat9(
-                        credentialsId: 'tomcat-manager', 
+                        credentialsId: 'admin', 
                         path: '', url: 'http://192.168.56.102:8080'
                     )
                 ], 
