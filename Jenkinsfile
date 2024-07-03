@@ -24,7 +24,7 @@ pipeline {
     }
     stage('Deploy') {
       steps {
-        deploy adapters: [tomcat9(credentialsId: 'admin', url: 'https://github.com/Shinsped/mywebapp')], contextPath: 'hello-world.war', war: 'target'
+        deploy adapters: [tomcat9(credentialsId: 'tomcat-manager', url: 'http://192.168.56.102:8080')], contextPath: 'null', war: 'target/hello-world.war'
       }
     }
   }
