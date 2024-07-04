@@ -32,8 +32,8 @@ pipeline {
         stage('Docker Image Tag') {
             agent any
             steps {
-                sh 'docker image tag mywebapp Shinsped/mywebapp:latest'
-                sh 'docker image tag mywebapp Shinsped/mywebapp:$BUILD_NUMBER'
+                sh 'docker image tag mywebapp shinsped/mywebapp:latest'
+                sh 'docker image tag mywebapp shinsped/mywebapp:$BUILD_NUMBER'
             }
         }
         stage('Docker Image Push to Docker Hub') {
@@ -41,15 +41,15 @@ pipeline {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-token',
                     url: 'https://index.docker.io/v1/') {
-                    sh 'docker image push Shinsped/mywebapp:latest'
-                    sh 'docker image push Shinsped/mywebapp:$BUILD_NUMBER'
+                    sh 'docker image push shinsped/mywebapp:latest'
+                    sh 'docker image push shinsped/mywebapp:$BUILD_NUMBER'
                 }
             }
         }
         stage('Docker Container Deploy to Docker Out of Docker with Ansible') {
             agent {
                 docker {
-                    image 'ghcr.io/Shinsped/jenkins-ansible-agent'
+                    image 'ghcr.io/shinsped/jenkins-ansible-agent'
                     args '-u 0:0 -e DOCKER_HOST=tcp://192.168.56.104:2375'
                 }
             }
