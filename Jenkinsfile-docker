@@ -1,0 +1,59 @@
+pipeline {
+    agent none
+
+    stages {
+        stage('Checkout') {
+            agent any
+            steps {
+                git branch: "main", url: 'https://github.com/Shinsped/mywebapp'
+            }
+        }
+        stage('Build') {
+            agent {
+                docker { image 'maven:3-openjdk-17' }
+            }
+            steps {
+                sh 'mvn clean package -DskipTests=true'
+            }
+        }
+        stage('Test') {
+            agent {
+                docker { image 'mavan:3-openjdk-17' }
+            }
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Build Docker Image') {
+            agent any
+            steps {
+                sh 'docker image build t- mywebapp .'
+            }
+        }
+        stage('DockerImage tag') {
+            agent any
+            steps {
+                sh 'docker image tag mywebapp Shinsped/mywebapp'
+                sh 'docker image tag mywebapp Shinsped/mywebapp:$BUILD_NUMBER'
+            }
+        }
+        stage('Docker Image Push to Docker Hub') {
+            agent any
+            steps {
+                withDockerRegistry(credentialsId: 'docker-hub-token',
+                    url: 'https://index.docker.io/v1/') {
+                    sh 'docker image Shinsped/mywebapp:latest'
+                    sh 'docker image push Shinsped/mywebapp:$BUILD_NUMBER'
+                }
+            }
+        }
+        stage('Docker Container Deploy to Docker Out of Docker') {
+            agent {
+                docker { image 'docker:dind' }
+            }
+            steps {
+                sh 'docker -H tcp://192.168.56.104:2375 container run --detach --name mywebapp -p 80:8080 Shinsped/mywebapp:$BUILD_NUMBER'
+            }
+        }
+    }
+}
