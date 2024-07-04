@@ -24,26 +24,20 @@ pipeline {
             }
         }
         stage('Build Docker Image') {
-            agent {
-                docker { image 'docker:latest' }
-            }
+            agent any
             steps {
                 sh 'docker build -t mywebapp .'
             }
         }
         stage('Docker Image Tag') {
-            agent {
-                docker { image 'docker:latest' }
-            }
+            agent any
             steps {
                 sh 'docker image tag mywebapp Shinsped/mywebapp:latest'
                 sh 'docker image tag mywebapp Shinsped/mywebapp:$BUILD_NUMBER'
             }
         }
         stage('Docker Image Push to Docker Hub') {
-            agent {
-                docker { image 'docker:latest' }
-            }
+            agent any
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-token',
                     url: 'https://index.docker.io/v1/') {
