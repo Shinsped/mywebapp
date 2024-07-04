@@ -57,7 +57,7 @@ pipeline {
         }
         stage('Docker Container Deploy to Docker Out of Docker') {
             agent {
-                docker { image 'docker:20.10-dind' }
+                docker { image 'docker:dind' }
             }
             steps {
                 script {
