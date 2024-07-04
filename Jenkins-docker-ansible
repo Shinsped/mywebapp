@@ -46,12 +46,15 @@ pipeline {
                 }
             }
         }
-        stage('Docker Container Deploy to Docker Out of Docker') {
+        stage('Docker Container Deploy to Docker Out of Docker with Ansible') {
             agent {
-                docker { image 'docker:dind' }
+                docker {
+                    image: 'ghcr.io/c1t1d0s7/jenkins-ansible-agent'
+                    args: '-u 0:0 -e DOCKER_HOST=tcp://192.168.56.104:2375'
+                }
             }
             steps {
-                sh 'docker -H tcp://192.168.56.104:2375 container run --detach --name mywebapp -p 80:8080 Shinsped/mywebapp:$BUILD_NUMBER'
+                ansiblePlaybook(playbook: 'docker-container-deploy.yaml')
             }
         }
     }
