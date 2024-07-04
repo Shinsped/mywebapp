@@ -9,7 +9,9 @@ pipeline {
         }
         stage('Build') {
             agent {
-                docker { image 'maven:3-openjdk-17' }
+                docker {
+                    image 'maven:3-openjdk-17'
+                }
             }
             steps {
                 sh 'mvn clean package -DskipTests=true'
@@ -17,7 +19,9 @@ pipeline {
         }
         stage('Test') {
             agent {
-                docker { image 'maven:3-openjdk-17' }
+                docker {
+                    image 'maven:3-openjdk-17'
+                }
             }
             steps {
                 sh 'mvn test'
@@ -32,26 +36,34 @@ pipeline {
         stage('Docker Image Tag') {
             agent any
             steps {
-                sh 'docker image tag mywebapp Shinsped/mywebapp:latest'
-                sh 'docker image tag mywebapp Shinsped/mywebapp:$BUILD_NUMBER'
+                script {
+                    def buildNumber = env.BUILD_NUMBER
+                    sh "docker image tag mywebapp Shinsped/mywebapp:latest"
+                    sh "docker image tag mywebapp Shinsped/mywebapp:${buildNumber}"
+                }
             }
         }
         stage('Docker Image Push to Docker Hub') {
             agent any
             steps {
-                withDockerRegistry(credentialsId: 'docker-hub-token',
-                    url: 'https://index.docker.io/v1/') {
-                    sh 'docker image push Shinsped/mywebapp:latest'
-                    sh 'docker image push Shinsped/mywebapp:$BUILD_NUMBER'
+                withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
+                    script {
+                        def buildNumber = env.BUILD_NUMBER
+                        sh 'docker image push Shinsped/mywebapp:latest'
+                        sh "docker image push Shinsped/mywebapp:${buildNumber}"
+                    }
                 }
             }
         }
         stage('Docker Container Deploy to Docker Out of Docker') {
             agent {
-                docker { image 'docker:dind' }
+                docker { image 'docker:20.10-dind' }
             }
             steps {
-                sh 'docker -H tcp://192.168.56.104:2375 container run --detach --name mywebapp -p 80:8080 Shinsped/mywebapp:$BUILD_NUMBER'
+                script {
+                    def buildNumber = env.BUILD_NUMBER
+                    sh "docker -H tcp://192.168.56.104:2375 container run --detach --name mywebapp -p 80:8080 Shinsped/mywebapp:${buildNumber}"
+                }
             }
         }
     }
