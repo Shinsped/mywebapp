@@ -4,7 +4,7 @@ pipeline {
         stage('Checkout') {
             agent any
             steps {
-                git branch: "main", url: 'https://github.com/Shinsped/mywebapp'
+                git branch: 'main', url: 'https://github.com/Shinsped/mywebapp'
             }
         }
         stage('Build') {
